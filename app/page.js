@@ -30,11 +30,11 @@ export default function Home() {
           setProducts(rjson.products);
         } else {
           console.error("Invalid response format: products is not an array");
-          setProducts([]); // Fallback to an empty array
+          setProducts([]);
         }
       } catch (error) {
         console.error("Error fetching products:", error);
-        setProducts([]); // Fallback to an empty array
+        setProducts([]);
       }
     };
 
@@ -43,13 +43,12 @@ export default function Home() {
 
   const addProduct = async (e) => {
     e.preventDefault();
-  
-    // Ensure that ProductForm is not empty
+
     if (!ProductForm.slug || !ProductForm.Product_name || !ProductForm.Quantity || !ProductForm.Price) {
       setMessage("Please fill in all required fields.");
       return;
     }
-  
+
     try {
       const response = await fetch("/api/product", {
         method: "POST",
@@ -58,26 +57,22 @@ export default function Home() {
         },
         body: JSON.stringify(ProductForm),
       });
-  
+
       if (!response.ok) {
         const errorResult = await response.json();
         console.error("API Error:", errorResult);
         throw new Error(errorResult.error || "Failed to add product");
       }
-  
+
       const result = await response.json();
       console.log(result);
-      setMessage("Product added successfully!"); 
-     
+      setMessage("Product added successfully!");
       setProducts((prevProducts) => [...prevProducts, result.product]);
-     
     } catch (error) {
       console.error("Add product error:", error);
       setMessage(`Error: ${error.message}`);
-      
     }
   };
-  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -90,15 +85,17 @@ export default function Home() {
   return (
     <>
       <Header />
-      <div className="container mx-auto p-6 bg-gray-50">
+      <div className="container mx-auto p-4 sm:p-6 lg:p-8 bg-gray-50">
         {/* Search Product Section */}
         <div className="mb-8">
-          <h1 className="text-2xl font-semibold text-gray-800 mb-4 flex items-center space-x-4">
-            <span>Search a Product</span>
+          <h1 className="text-2xl font-semibold text-gray-800 mb-4">
+            Search a Product
+          </h1>
+          <div className="flex flex-wrap gap-4">
             <input
               type="text"
               placeholder="Type to search..."
-              className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 w-1/2"
+              className="flex-1 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
             <select className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
               <option value="">All Categories</option>
@@ -106,7 +103,7 @@ export default function Home() {
               <option value="hardware">Hardware</option>
               <option value="furniture">Furniture</option>
             </select>
-          </h1>
+          </div>
         </div>
 
         {/* Add Product Section */}
@@ -116,72 +113,29 @@ export default function Home() {
           </h1>
           <form
             onSubmit={addProduct}
-            className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+            className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
           >
-            <input
-              name="slug"
-              value={ProductForm.slug}
-              onChange={handleChange}
-              type="text"
-              placeholder="Item Name"
-              className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-              name="EMIE_number"
-              onChange={handleChange}
-              type="text"
-              placeholder="EMIE Number"
-              className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-              name="Model_number"
-              onChange={handleChange}
-              type="text"
-              placeholder="Model Number"
-              className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-              name="item_id"
-              onChange={handleChange}
-              type="text"
-              placeholder="Item ID (backend use)"
-              className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-              onChange={handleChange}
-              name="Product_name"
-              type="text"
-              placeholder="Product Name"
-              className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-              name="Quantity"
-              onChange={handleChange}
-              type="number"
-              placeholder="Quantity (in stock)"
-              className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-              name="Price"
-              onChange={handleChange}
-              type="text"
-              placeholder="Price (per unit)"
-              className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-              name="Category"
-              onChange={handleChange}
-              type="text"
-              placeholder="Category (e.g., electronics, hardware)"
-              className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-              name="QR_Code"
-              onChange={handleChange}
-              type="text"
-              placeholder="QR Code"
-              className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
+            {[
+              { name: "slug", placeholder: "Item Name" },
+              { name: "EMIE_number", placeholder: "EMIE Number" },
+              { name: "Model_number", placeholder: "Model Number" },
+              { name: "item_id", placeholder: "Item ID (backend use)" },
+              { name: "Product_name", placeholder: "Product Name" },
+              { name: "Quantity", placeholder: "Quantity (in stock)", type: "number" },
+              { name: "Price", placeholder: "Price (per unit)" },
+              { name: "Category", placeholder: "Category (e.g., electronics, hardware)" },
+              { name: "QR_Code", placeholder: "QR Code" },
+            ].map((field) => (
+              <input
+                key={field.name}
+                name={field.name}
+                value={ProductForm[field.name]}
+                onChange={handleChange}
+                type={field.type || "text"}
+                placeholder={field.placeholder}
+                className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            ))}
             <button
               type="submit"
               className="col-span-1 sm:col-span-2 lg:col-span-3 bg-blue-500 text-white font-semibold p-3 rounded-md hover:bg-blue-600"
@@ -189,7 +143,7 @@ export default function Home() {
               Add Product
             </button>
           </form>
-          <p className="text-green-500 mt-2">{message}</p> {/* Success/Error Message */}
+          <p className="text-green-500 mt-2">{message}</p>
         </div>
 
         {/* Display Current Stock Section */}
@@ -200,30 +154,42 @@ export default function Home() {
           <table className="min-w-full bg-white border border-gray-200 rounded-lg">
             <thead className="bg-blue-500 text-white">
               <tr>
-                <th className="px-4 py-3 text-left">Item Name</th>
-                <th className="px-4 py-3 text-left">EMIE Number</th>
-                <th className="px-4 py-3 text-left">Model Number</th>
-                <th className="px-4 py-3 text-left">Item ID</th>
-                <th className="px-4 py-3 text-left">Product Name</th>
-                <th className="px-4 py-3 text-left">Quantity</th>
-                <th className="px-4 py-3 text-left">Price</th>
-                <th className="px-4 py-3 text-left">Category</th>
-                <th className="px-4 py-3 text-left">QR Code</th>
-                <th className="px-4 py-3 text-left">Actions</th>
+                {[
+                  "Item Name",
+                  "EMIE Number",
+                  "Model Number",
+                  "Item ID",
+                  "Product Name",
+                  "Quantity",
+                  "Price",
+                  "Category",
+                  "QR Code",
+                  "Actions",
+                ].map((header) => (
+                  <th key={header} className="px-4 py-3 text-left">
+                    {header}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
               {products.map((item) => (
                 <tr key={item._id} className="border-b hover:bg-gray-100">
-                  <td className="px-4 py-3">{item.slug}</td>
-                  <td className="px-4 py-3">{item.EMIE_number}</td>
-                  <td className="px-4 py-3">{item.Model_number}</td>
-                  <td className="px-4 py-3">{item.item_id}</td>
-                  <td className="px-4 py-3">{item.Product_name}</td>
-                  <td className="px-4 py-3">{item.Quantity}</td>
-                  <td className="px-4 py-3">{item.Price}</td>
-                  <td className="px-4 py-3">{item.Category}</td>
-                  <td className="px-4 py-3">{item.QR_Code}</td>
+                  {[
+                    item.slug,
+                    item.EMIE_number,
+                    item.Model_number,
+                    item.item_id,
+                    item.Product_name,
+                    item.Quantity,
+                    item.Price,
+                    item.Category,
+                    item.QR_Code,
+                  ].map((value, idx) => (
+                    <td key={idx} className="px-4 py-3">
+                      {value}
+                    </td>
+                  ))}
                   <td className="px-4 py-3">
                     <button className="text-blue-500 hover:text-blue-700 font-semibold mr-2">
                       Edit
