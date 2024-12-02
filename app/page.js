@@ -2,8 +2,15 @@
 import Image from "next/image";
 import Header from "../components/Header";
 import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useAuth } from "../context/AuthContext"; // Import useAuth
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const { authUser, isLoggedIn,role  } = useAuth(); // Access auth state
+  console.log("This is user details:", authUser);
+  console.log("This is Auth Role",role);
+  const router = useRouter();
   const [ProductForm, setProductForm] = useState({
     slug: "",
     EMIE_number: "",
@@ -44,7 +51,12 @@ export default function Home() {
   const addProduct = async (e) => {
     e.preventDefault();
 
-    if (!ProductForm.slug || !ProductForm.Product_name || !ProductForm.Quantity || !ProductForm.Price) {
+    if (
+      !ProductForm.slug ||
+      !ProductForm.Product_name ||
+      !ProductForm.Quantity ||
+      !ProductForm.Price
+    ) {
       setMessage("Please fill in all required fields.");
       return;
     }
@@ -84,31 +96,15 @@ export default function Home() {
 
   return (
     <>
-      <Header />
       <div className="container mx-auto p-4 sm:p-6 lg:p-8 bg-gray-50">
         {/* Search Product Section */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-semibold text-gray-800 mb-4">
-            Search a Product
-          </h1>
-          <div className="flex flex-wrap gap-4">
-            <input
-              type="text"
-              placeholder="Type to search..."
-              className="flex-1 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <select className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
-              <option value="">All Categories</option>
-              <option value="electronics">Electronics</option>
-              <option value="hardware">Hardware</option>
-              <option value="furniture">Furniture</option>
-            </select>
-          </div>
-        </div>
+       <button className="bg-blue-500 rounded w-full h-10"  onClick={() => router.push("/search")}>
+        Search 
+       </button>
 
         {/* Add Product Section */}
         <div className="mb-8">
-          <h1 className="text-2xl font-semibold text-gray-800 mb-4">
+          <h1 className=" text-lg sm:text-2xl font-semibold text-gray-800 mb-4 mt-4 ">
             Add a Product
           </h1>
           <form
@@ -121,9 +117,16 @@ export default function Home() {
               { name: "Model_number", placeholder: "Model Number" },
               { name: "item_id", placeholder: "Item ID (backend use)" },
               { name: "Product_name", placeholder: "Product Name" },
-              { name: "Quantity", placeholder: "Quantity (in stock)", type: "number" },
+              {
+                name: "Quantity",
+                placeholder: "Quantity (in stock)",
+                type: "number",
+              },
               { name: "Price", placeholder: "Price (per unit)" },
-              { name: "Category", placeholder: "Category (e.g., electronics, hardware)" },
+              {
+                name: "Category",
+                placeholder: "Category (e.g., electronics, hardware)",
+              },
               { name: "QR_Code", placeholder: "QR Code" },
             ].map((field) => (
               <input
@@ -144,6 +147,26 @@ export default function Home() {
             </button>
           </form>
           <p className="text-green-500 mt-2">{message}</p>
+        </div>
+
+        {/* Role-based Button for Admin */}
+        <div className="flex mb-4">
+        <div>
+          {authUser?.role === "Admin" && ( // Use authUser.role to check role
+            <Link href="/upload">
+              <button className="mr-4 col-span-1 sm:col-span-2 lg:col-span-3 bg-blue-500 text-white font-semibold p-3 rounded-md hover:bg-blue-600">
+                Upload an Excel File
+              </button>
+            </Link>
+          )}
+        </div>
+        <div>
+        <Link href="/scan">
+              <button className="col-span-1 sm:col-span-2 lg:col-span-3 bg-blue-500 text-white font-semibold p-3 rounded-md hover:bg-blue-600">
+                Scan QR Code
+              </button>
+            </Link>
+        </div>
         </div>
 
         {/* Display Current Stock Section */}
