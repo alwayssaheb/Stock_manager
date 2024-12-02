@@ -1,101 +1,232 @@
+"use client";
 import Image from "next/image";
+import Header from "../components/Header";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useAuth } from "../context/AuthContext"; 
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.js
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const { authUser, isLoggedIn,role  } = useAuth(); 
+  console.log("This is user details:", authUser);
+  console.log("This is Auth Role",role);
+  const router = useRouter();
+  const [ProductForm, setProductForm] = useState({
+    slug: "",
+    EMIE_number: "",
+    Model_number: "",
+    item_id: "",
+    Product_name: "",
+    Quantity: "",
+    Price: "",
+    Category: "",
+    QR_Code: "",
+  });
+  const [message, setMessage] = useState("");
+  const [products, setProducts] = useState([]);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await fetch("/api/product");
+        if (!response.ok) {
+          throw new Error("Failed to fetch products");
+        }
+        const rjson = await response.json();
+        if (Array.isArray(rjson.products)) {
+          setProducts(rjson.products);
+        } else {
+          console.error("Invalid response format: products is not an array");
+          setProducts([]);
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        setProducts([]);
+      }
+    };
+
+    fetchProduct();
+  }, []);
+
+  const addProduct = async (e) => {
+    e.preventDefault();
+
+    if (
+      !ProductForm.slug ||
+      !ProductForm.Product_name ||
+      !ProductForm.Quantity ||
+      !ProductForm.Price
+    ) {
+      setMessage("Please fill in all required fields.");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/product", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(ProductForm),
+      });
+
+      if (!response.ok) {
+        const errorResult = await response.json();
+        console.error("API Error:", errorResult);
+        throw new Error(errorResult.error || "Failed to add product");
+      }
+
+      const result = await response.json();
+      console.log(result);
+      setMessage("Product added successfully!");
+      setProducts((prevProducts) => [...prevProducts, result.product]);
+    } catch (error) {
+      console.error("Add product error:", error);
+      setMessage(`Error: ${error.message}`);
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setProductForm((prevForm) => ({
+      ...prevForm,
+      [name]: value,
+    }));
+  };
+
+  return (
+    <>
+      <div className="container mx-auto p-4 sm:p-6 lg:p-8 bg-gray-50">
+        {/* Search Product Section */}
+       <button className="bg-blue-500 rounded w-full h-10"  onClick={() => router.push("/search")}>
+        Search 
+       </button>
+
+        {/* Add Product Section */}
+        <div className="mb-8">
+          <h1 className=" text-lg sm:text-2xl font-semibold text-gray-800 mb-4 mt-4 ">
+            Add a Product
+          </h1>
+          <form
+            onSubmit={addProduct}
+            className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            {[
+              { name: "slug", placeholder: "Item Name" },
+              { name: "EMIE_number", placeholder: "EMIE Number" },
+              { name: "Model_number", placeholder: "Model Number" },
+              { name: "item_id", placeholder: "Item ID (backend use)" },
+              { name: "Product_name", placeholder: "Product Name" },
+              {
+                name: "Quantity",
+                placeholder: "Quantity (in stock)",
+                type: "number",
+              },
+              { name: "Price", placeholder: "Price (per unit)" },
+              {
+                name: "Category",
+                placeholder: "Category (e.g., electronics, hardware)",
+              },
+              { name: "QR_Code", placeholder: "QR Code" },
+            ].map((field) => (
+              <input
+                key={field.name}
+                name={field.name}
+                value={ProductForm[field.name]}
+                onChange={handleChange}
+                type={field.type || "text"}
+                placeholder={field.placeholder}
+                className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            ))}
+            <button
+              type="submit"
+              className="col-span-1 sm:col-span-2 lg:col-span-3 bg-blue-500 text-white font-semibold p-3 rounded-md hover:bg-blue-600"
+            >
+              Add Product
+            </button>
+          </form>
+          <p className="text-green-500 mt-2">{message}</p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+
+        {/* Role-based Button for Admin */}
+        <div className="flex mb-4">
+        <div>
+          {authUser?.role === "Admin" && ( 
+            <Link href="/upload">
+              <button className="mr-4 col-span-1 sm:col-span-2 lg:col-span-3 bg-blue-500 text-white font-semibold p-3 rounded-md hover:bg-blue-600">
+                Upload an Excel File
+              </button>
+            </Link>
+          )}
+        </div>
+        <div>
+        <Link href="/scan">
+              <button className="col-span-1 sm:col-span-2 lg:col-span-3 bg-blue-500 text-white font-semibold p-3 rounded-md hover:bg-blue-600">
+                Scan QR Code
+              </button>
+            </Link>
+        </div>
+        </div>
+
+        {/* Display Current Stock Section */}
+        <h1 className="text-2xl font-semibold text-gray-800 mb-4">
+          Current Stock
+        </h1>
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white border border-gray-200 rounded-lg">
+            <thead className="bg-blue-500 text-white">
+              <tr>
+                {[
+                  "Item Name",
+                  "EMIE Number",
+                  "Model Number",
+                  "Item ID",
+                  "Product Name",
+                  "Quantity",
+                  "Price",
+                  "Category",
+                  "QR Code",
+                  "Actions",
+                ].map((header) => (
+                  <th key={header} className="px-4 py-3 text-left">
+                    {header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {products.map((item) => (
+                <tr key={item._id} className="border-b hover:bg-gray-100">
+                  {[
+                    item.slug,
+                    item.EMIE_number,
+                    item.Model_number,
+                    item.item_id,
+                    item.Product_name,
+                    item.Quantity,
+                    item.Price,
+                    item.Category,
+                    item.QR_Code,
+                  ].map((value, idx) => (
+                    <td key={idx} className="px-4 py-3">
+                      {value}
+                    </td>
+                  ))}
+                  <td className="px-4 py-3">
+                    <button className="text-blue-500 hover:text-blue-700 font-semibold mr-2">
+                      Edit
+                    </button>
+                    <button className="text-red-500 hover:text-red-700 font-semibold">
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </>
   );
 }
