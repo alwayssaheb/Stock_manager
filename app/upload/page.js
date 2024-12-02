@@ -24,7 +24,7 @@ export default function UploadExcel() {
           const sheetName = workbook.SheetNames[0];
           const workSheet = workbook.Sheets[sheetName];
           const json = XLSX.utils.sheet_to_json(workSheet);
-          setJsonData(JSON.stringify(json, null, 2)); // Corrected stringification
+          setJsonData(JSON.stringify(json, null, 2)); 
         }
       };
       reader.readAsBinaryString(file);
@@ -43,7 +43,7 @@ export default function UploadExcel() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ data: JSON.parse(JsonData) }), // Send JSON data
+        body: JSON.stringify({ data: JSON.parse(JsonData) }), 
       });
 
       const result = await response.json();

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { MongoClient } from 'mongodb';
 
-// MongoDB URI - use environment variables in production
+
 const uri = process.env.MONGODB_URI || "mongodb+srv://saheb:T4lIiTzp4VA2s2m6@cluster0.h3rk6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 const client = new MongoClient(uri);
 
@@ -13,7 +13,6 @@ export async function GET() {
         
         const allProducts = await inventory.find({}).toArray();
         
-        // Wrap the response in a key
         return NextResponse.json({ products: allProducts }, { status: 200 });
     } catch (error) {
         console.error("GET Error:", error);
@@ -34,7 +33,7 @@ export async function POST(request) {
         
         const result = await inventory.insertOne(body);
 
-        // Fetch the inserted document from the database
+       
         const insertedProduct = await inventory.findOne({ _id: result.insertedId });
 
         return NextResponse.json({ product: insertedProduct, ok: true }, { status: 201 });

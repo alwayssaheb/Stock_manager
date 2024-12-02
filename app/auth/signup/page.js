@@ -6,7 +6,7 @@ export default function SignUp() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("User"); // Default role is 'User'
+  const [role, setRole] = useState("User"); 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -14,7 +14,7 @@ export default function SignUp() {
     e.preventDefault();
 
     try {
-      // Make a POST request to the /api/register endpoint
+     
       const res = await fetch("/api/register", {
         method: "POST",
         headers: {
@@ -24,23 +24,22 @@ export default function SignUp() {
           name,
           email,
           password,
-          role, // Include the role in the payload
+          role, 
         }),
       });
 
-      // Parse the response
-    //   const data = await res.json();
+     
 
       if (res.ok) {
-        // setSuccess(data.message || "Registration successful!");
+       
         setError("");
-        // Reset form fields
+       
         setName("");
         setEmail("");
         setPassword("");
-        setRole("User"); // Reset role to default
+        setRole("User"); 
       } else {
-        // setError(data.error || "User registration failed");
+       
         setSuccess("");
       }
     } catch (err) {

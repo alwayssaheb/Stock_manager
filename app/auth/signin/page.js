@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useAuth } from "../../../context/AuthContext"; // Use AuthContext
+import { useAuth } from "../../../context/AuthContext"; 
 import { useRouter } from "next/navigation";
 import {jwtDecode} from "jwt-decode";
 
 export default function SignIn() {
-  const { setAuthUser, setIsLoggedIn, setRole } = useAuth(); // Access AuthContext methods
+  const { setAuthUser, setIsLoggedIn, setRole } = useAuth(); 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -16,12 +16,12 @@ export default function SignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Clear previous error and success messages
+   
     setError("");
     setSuccess("");
 
     try {
-      // Send sign-in request to the API
+    
       const response = await fetch("/api/signin", {
         method: "POST",
         headers: {
@@ -33,29 +33,29 @@ export default function SignIn() {
       const data = await response.json();
 
       if (response.ok) {
-        // Successful sign-in
+       
         setSuccess(data.message);
 
-        // Save the token to localStorage
+       
         localStorage.setItem("token", data.token);
-        // Decode and store user details in AuthContext
+        
         try {
           const decoded = jwtDecode(data.token);
           console.log("-------------------------------------------------------------------");
           console.log(decoded);
-          setAuthUser(decoded); // Store user details
-          setRole(decoded.role); // Store user role
-          setIsLoggedIn(true); // Set login state
+          setAuthUser(decoded); 
+          setRole(decoded.role); 
+          setIsLoggedIn(true); 
         } catch (error) {
           console.error("Failed to decode token:", error);
           setError("Failed to process authentication. Please try again.");
           return;
         }
 
-        // Redirect to the dashboard or appropriate page
+       
         router.push("/");
       } else {
-        // Handle errors from the API
+       
         setError(data.error || "Invalid credentials. Please try again.");
       }
     } catch (err) {

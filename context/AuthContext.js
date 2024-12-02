@@ -13,7 +13,7 @@ export function AuthProvider({ children }) {
   const [authUser, setAuthUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [role, setRole] = useState(null);
-  const [loading, setLoading] = useState(true); // New loading state
+  const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
     console.log("I ran first");
@@ -30,7 +30,7 @@ export function AuthProvider({ children }) {
         console.error("Failed to decode token:", error);
       }
     }
-    setLoading(false); // Mark loading as false after the check is done
+    setLoading(false); 
   }, []);
 
   const logout = () => {
@@ -48,7 +48,7 @@ export function AuthProvider({ children }) {
     role,
     setRole,
     logout,
-    loading, // Add loading state to context value
+    loading, 
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import clientPromise from '../../../lib/mongodb'; // Import the clientPromise
+import clientPromise from '../../../lib/mongodb'; 
 
 export async function GET(request) {
     const { searchParams } = new URL(request.url);
@@ -11,11 +11,11 @@ export async function GET(request) {
     }
 
     try {
-        const client = await clientPromise; // Wait for the clientPromise to resolve
+        const client = await clientPromise; 
         const database = client.db('stock');
         const inventory = database.collection('inventory');
         
-        // Sanitize the QR code input
+
         const sanitizedQRCode = qrCode.trim();
         const product = await inventory.findOne({ QR_Code: sanitizedQRCode });
         console.log("Product found:", product);

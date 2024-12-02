@@ -26,12 +26,12 @@ const userSchema = new mongoose.Schema({
         default: false,
     },
     forgotPasswordToken: String, 
-    forgotPasswordTokenExpiry: Date, // Corrected from `date` to `Date`
+    forgotPasswordTokenExpiry: Date, 
     VerifyToken: String,
-    VerifyTokenExpiry: Date, // Corrected from `Date` to `Date`
+    VerifyTokenExpiry: Date, 
 });
 
-// Check for existing models before creating a new one to prevent errors in development
+
 const User = mongoose.models.users || mongoose.model("users", userSchema);
 
 export default User;

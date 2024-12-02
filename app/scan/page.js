@@ -4,50 +4,50 @@ import { useEffect, useRef, useState } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
 
 export default function QRCodeScanner() {
-  const [scannedData, setScannedData] = useState(null); // To store scanned QR code data
-  const [syncError, setSyncError] = useState(null); // To handle sync errors
-  const [syncSuccess, setSyncSuccess] = useState(null); // To display success message
-  const [product, setProduct] = useState(null); // To store product details
-  const [isModalOpen, setIsModalOpen] = useState(false); // To control modal visibility
-  const scannerRef = useRef(null); // Reference to the scanner div
-  const qrCodeScannerRef = useRef(null); // Reference to the Html5QrcodeScanner instance
+  const [scannedData, setScannedData] = useState(null); 
+  const [syncError, setSyncError] = useState(null); 
+  const [syncSuccess, setSyncSuccess] = useState(null); 
+  const [product, setProduct] = useState(null); 
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const scannerRef = useRef(null);
+  const qrCodeScannerRef = useRef(null); 
 
   useEffect(() => {
     const qrCodeScanner = new Html5QrcodeScanner(
-      "qr-reader", // ID of the div where the scanner will render
+      "qr-reader",
       {
-        fps: 10, // Frames per second for scanning
+        fps: 10, 
         qrbox: (viewfinderWidth, viewfinderHeight) => {
-          // Dynamically adjust the scanner box size based on the device
+        
           const size = Math.min(viewfinderWidth, viewfinderHeight) * 0.6;
           return { width: size, height: size };
         },
       },
-      false // Disable verbose logging
+      false 
     );
 
-    // Store the scanner reference for cleanup
+   
     qrCodeScannerRef.current = qrCodeScanner;
 
-    // Start rendering the scanner
+   
     qrCodeScanner.render(
       (decodedText) => {
-        if (!scannedData) { // Prevent multiple scans if already scanned
+        if (!scannedData) { 
           setScannedData(decodedText);
-          syncScannedData(decodedText); // Sync scanned data with backend
-          qrCodeScannerRef.current?.clear(); // Stop scanning after success
+          syncScannedData(decodedText); 
+          qrCodeScannerRef.current?.clear(); 
         }
       },
       (error) => {
         console.warn(`QR code scan error: ${error}`);
-        // Check if the error is related to the QR code parsing
+       
         if (error instanceof Error && error.message.includes("NotFoundException")) {
           console.log("QR code not detected properly, please try again.");
         }
       }
     );
 
-    // Cleanup on component unmount
+   
     return () => {
       if (qrCodeScannerRef.current) {
         qrCodeScannerRef.current.clear().catch((err) => {
@@ -55,19 +55,19 @@ export default function QRCodeScanner() {
         });
       }
     };
-  }, [scannedData]); // Depend on scannedData to prevent multiple scans
+  }, [scannedData]); 
 
   const syncScannedData = async (qrCode) => {
     try {
-      setSyncError(null); // Reset errors
-      setSyncSuccess(null); // Reset success message
+      setSyncError(null); 
+      setSyncSuccess(null); 
       const response = await fetch(`/api/scan?QR_Code=${encodeURIComponent(qrCode)}`);
       const result = await response.json();
       console.log(result);
 
       if (response.ok) {
-        setProduct(result.product); // Store product details
-        setIsModalOpen(true); // Open modal on success
+        setProduct(result.product); 
+        setIsModalOpen(true); 
         setSyncSuccess(`Product Found: ${result.product.slug}`);
       } else {
         setSyncError(result.error || "Failed to fetch product data.");
@@ -79,9 +79,9 @@ export default function QRCodeScanner() {
   };
 
   const closeModal = () => {
-    setIsModalOpen(false); // Close the modal when the cross button is clicked
-    setProduct(null); // Clear product details
-    setScannedData(null); // Clear scanned data to reset for the next scan
+    setIsModalOpen(false); 
+    setProduct(null); 
+    setScannedData(null); 
   };
 
   return (
@@ -115,7 +115,7 @@ export default function QRCodeScanner() {
         </div>
       )}
 
-      {/* Modal/Popup to display product details */}
+    
       {isModalOpen && product && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-md shadow-lg w-[90%] md:w-[400px] relative">

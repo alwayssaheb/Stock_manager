@@ -4,17 +4,17 @@ import { NextRequest, NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-// Connect to the database
+
 connectDB();
 
 export async function POST(request) {
     try {
-        // Parse the request body
+
         const reqBody = await request.json();
         console.log(reqBody);
         const { email, password } = reqBody;
 
-        // Validation
+
         if (!email || !password) {
             return NextResponse.json(
                 { error: "Email and password are required" },
@@ -22,7 +22,7 @@ export async function POST(request) {
             );
         }
 
-        // Check if the user exists
+
         const user = await User.findOne({ email });
         if (!user) {
             return NextResponse.json(
@@ -31,7 +31,7 @@ export async function POST(request) {
             );
         }
 
-        // Check if the password matches
+
         const isMatch = await bcryptjs.compare(password, user.password);
         if (!isMatch) {
             return NextResponse.json(
@@ -40,18 +40,18 @@ export async function POST(request) {
             );
         }
 
-        // Generate a JWT token
+
         const token = jwt.sign(
             { id: user._id, email: user.email, role: user.role },
-            process.env.AUTH_SECRET, // Ensure you have this variable in your .env file
-            { expiresIn: "1d" } // Token expiration time
+            process.env.AUTH_SECRET, 
+            { expiresIn: "1d" }
         );
 
-        // Send a success response with the token
+     
         return NextResponse.json(
             {
                 message: "Login successful",
-                token, // Return the token to the client
+                token, 
                 user: {
                     id: user._id,
                     email: user.email,

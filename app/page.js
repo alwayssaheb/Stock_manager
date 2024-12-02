@@ -3,11 +3,11 @@ import Image from "next/image";
 import Header from "../components/Header";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useAuth } from "../context/AuthContext"; // Import useAuth
+import { useAuth } from "../context/AuthContext"; 
 import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const { authUser, isLoggedIn,role  } = useAuth(); // Access auth state
+  const { authUser, isLoggedIn,role  } = useAuth(); 
   console.log("This is user details:", authUser);
   console.log("This is Auth Role",role);
   const router = useRouter();
@@ -152,7 +152,7 @@ export default function Home() {
         {/* Role-based Button for Admin */}
         <div className="flex mb-4">
         <div>
-          {authUser?.role === "Admin" && ( // Use authUser.role to check role
+          {authUser?.role === "Admin" && ( 
             <Link href="/upload">
               <button className="mr-4 col-span-1 sm:col-span-2 lg:col-span-3 bg-blue-500 text-white font-semibold p-3 rounded-md hover:bg-blue-600">
                 Upload an Excel File
