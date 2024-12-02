@@ -12,6 +12,7 @@ export default function SignIn() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const router = useRouter();
+  console.log("AUTH_SECRET in production:", process.env.AUTH_SECRET);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
