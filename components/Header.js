@@ -33,7 +33,8 @@ export default function Header() {
         <button
           onClick={toggleMenu}
           className="text-gray-600 lg:hidden focus:outline-none"
-          aria-label="Toggle Menu"
+          aria-expanded={menuOpen ? "true" : "false"}
+          aria-controls="menu"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -53,6 +54,7 @@ export default function Header() {
 
         {/* Desktop Menu */}
         <nav
+          id="menu"
           className={`${
             menuOpen ? "block" : "hidden"
           } absolute top-16 left-0 w-full bg-white lg:flex lg:static lg:w-auto lg:items-center`}
@@ -61,8 +63,11 @@ export default function Header() {
             {/* Conditional Rendering */}
             {isLoggedIn ? (
               <>
+                {/* Welcome Message (Visible on both mobile and desktop) */}
                 <li className="px-4 py-2 text-center lg:text-left">
-                  <span className="text-gray-800">Welcome, {authUser?.email || "User"}!</span>
+                  <span className="text-gray-800">
+                    Welcome, {authUser?.email || "User"}!
+                  </span>
                 </li>
                 <li className="px-4 py-2">
                   <button
@@ -86,6 +91,15 @@ export default function Header() {
           </ul>
         </nav>
       </div>
+
+      {/* Mobile View: Ensure Welcome Message appears above the search bar */}
+      {menuOpen && isLoggedIn && (
+        <div className="lg:hidden p-4 bg-gray-100">
+          <span className="text-gray-800 text-center block mb-2">
+            Welcome, {authUser?.email || "User"}!
+          </span>
+        </div>
+      )}
     </header>
   );
 }
