@@ -6,15 +6,14 @@ export default function SignUp() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("User"); 
+  const [role, setRole] = useState("User");
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [success, setSuccess] = useState(""); // Added success state
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-     
       const res = await fetch("/api/register", {
         method: "POST",
         headers: {
@@ -24,28 +23,26 @@ export default function SignUp() {
           name,
           email,
           password,
-          role, 
+          role,
         }),
       });
 
-     
-
       if (res.ok) {
-       
         setError("");
-       
+        setSuccess("User registered successfully!"); // Display success message
         setName("");
         setEmail("");
         setPassword("");
-        setRole("User"); 
+        setRole("User");
       } else {
-       
-        setSuccess("");
+        const data = await res.json();
+        setError(data.error || "An error occurred. Please try again.");
+        setSuccess(""); // Clear success message if error occurs
       }
     } catch (err) {
       console.error("Error during registration:", err);
       setError("An unexpected error occurred. Please try again.");
-      setSuccess("");
+      setSuccess(""); // Clear success message if error occurs
     }
   };
 
@@ -55,6 +52,7 @@ export default function SignUp() {
         <h2 className="text-2xl font-bold text-center text-gray-900">
           Create Your Account
         </h2>
+
         {error && (
           <p className="text-red-500 text-center text-sm font-medium">{error}</p>
         )}
@@ -63,6 +61,7 @@ export default function SignUp() {
             {success}
           </p>
         )}
+
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <label
