@@ -24,7 +24,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="container mx-auto p-4 sm:p-6 lg:p-8 bg-gray-50">
+      <div className="container mx-auto p-4 sm:p-6 lg:p-8 bg-gray-50 overflow-x-auto"> {/* Added overflow-x-auto to container */}
         {/* Search Product Section */}
         <button
           className="bg-blue-500 rounded w-full h-10"
