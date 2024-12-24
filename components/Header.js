@@ -57,13 +57,12 @@ export default function Header() {
           id="menu"
           className={`${
             menuOpen ? "block" : "hidden"
-          } absolute top-16 left-0 w-full bg-white lg:flex lg:static lg:w-auto lg:items-center`}
+          } absolute top-16 left-0 w-full bg-white z-50 shadow-md lg:flex lg:static lg:w-auto lg:items-center`}
         >
           <ul className="flex flex-col lg:flex-row lg:space-x-6 lg:items-center">
-            {/* Conditional Rendering */}
             {isLoggedIn ? (
               <>
-                {/* Welcome Message (Visible on both mobile and desktop) */}
+                {/* Welcome Message */}
                 <li className="px-4 py-2 text-center lg:text-left">
                   <span className="text-gray-800">
                     Welcome, {authUser?.email || "User"}!
@@ -92,12 +91,18 @@ export default function Header() {
         </nav>
       </div>
 
-      {/* Mobile View: Ensure Welcome Message appears above the search bar */}
+      {/* Mobile Menu: Ensure Welcome Message and Menu Dropdown don't overlap */}
       {menuOpen && isLoggedIn && (
-        <div className="lg:hidden p-4 bg-gray-100">
+        <div className="lg:hidden p-4 bg-gray-100 z-40 shadow-lg">
           <span className="text-gray-800 text-center block mb-2">
             Welcome, {authUser?.email || "User"}!
           </span>
+          <button
+            onClick={handleSignOut}
+            className="w-full px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600"
+          >
+            Sign Out
+          </button>
         </div>
       )}
     </header>

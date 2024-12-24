@@ -39,8 +39,8 @@ export const useProduct = () => {
   };
 
   // Add a product
-  const addProduct = async (event) => {
-    event.preventDefault(); // Prevent form submission
+  const addProduct = async () => {
+    // event.preventDefault(); // Prevent form submission
     try {
       const response = await fetch("/api/productbulk", {
         method: "POST",
