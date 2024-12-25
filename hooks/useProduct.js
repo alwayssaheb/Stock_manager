@@ -40,7 +40,7 @@ export const useProduct = () => {
 
   // Add a product
   const addProduct = async () => {
-    // event.preventDefault(); // Prevent form submission
+    // event.preventDefault(); 
     try {
       const response = await fetch("/api/productbulk", {
         method: "POST",
@@ -53,9 +53,9 @@ export const useProduct = () => {
       const data = await response.json();
 
       if (data.message === "Data successfully saved to the database!") {
-        fetchProducts(); // Refresh the product list
+        fetchProducts(); 
         setMessage("Product added successfully!");
-        setProductForm({}); // Clear form after successful addition
+        setProductForm({}); 
       } else {
         setMessage("Failed to add product.");
       }
@@ -82,7 +82,7 @@ export const useProduct = () => {
 
       if (response.ok) {
         setMessage("Product deleted successfully!");
-        fetchProducts(); // Refresh the product list
+        fetchProducts(); 
       } else {
         setMessage(`Failed to delete product: ${data.error}`);
       }
@@ -93,7 +93,7 @@ export const useProduct = () => {
   };
 
   useEffect(() => {
-    fetchProducts(); // Fetch products on mount
+    fetchProducts();
   }, []);
 
   return {

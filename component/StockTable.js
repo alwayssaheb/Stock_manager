@@ -1,11 +1,12 @@
 import { useRouter } from "next/navigation";
+import { FaTrash, FaEdit } from "react-icons/fa";
 
 const StockTable = ({ products, deleteProduct }) => {
   const router = useRouter();
 
   return (
     <div className="overflow-x-auto w-full">
-      <div className="w-full max-w-7xl mx-auto"> {/* Adjust container width */}
+      <div className="w-full max-w-7xl mx-auto"> 
         <table className="w-full bg-white border border-gray-200 rounded-lg">
           <thead className="bg-blue-500 text-white">
             <tr>
@@ -34,7 +35,7 @@ const StockTable = ({ products, deleteProduct }) => {
           </thead>
           <tbody>
             {products.map((item) => {
-              const profit = item.sell_price - item.buy_price; // Calculate profit
+              const profit = item.sell_price - item.buy_price;
               return (
                 <tr
                   key={item._id}
@@ -61,19 +62,19 @@ const StockTable = ({ products, deleteProduct }) => {
                   </td>
                   <td className="px-4 py-2 text-xs sm:text-sm">{profit}</td>
                   <td className="px-4 py-2 text-xs sm:text-sm flex flex-wrap gap-2">
-                    <button
+                  <button
                       onClick={() => router.push(`/edit?id=${item._id}`)}
                       className="text-blue-500 hover:text-blue-700 text-xs sm:text-sm font-medium transition duration-200"
                       aria-label={`Edit ${item.model_id?.model_name || "item"}`}
                     >
-                      Edit
+                      <FaEdit className="text-lg" /> 
                     </button>
                     <button
                       onClick={() => deleteProduct(item._id)}
                       className="text-red-500 hover:text-red-700 text-xs sm:text-sm font-medium transition duration-200"
                       aria-label={`Delete ${item.model_id?.model_name || "item"}`}
                     >
-                      Delete
+                      <FaTrash className="text-lg" /> 
                     </button>
                   </td>
                 </tr>

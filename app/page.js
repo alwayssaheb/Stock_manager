@@ -6,6 +6,7 @@ import StockTable from "../component/StockTable";
 import { useProduct } from "../hooks/useProduct";
 import AddProductModal from "../modal/AddProductModal";
 import UploadExcelModal from "../modal/UploadExcelModal";
+import { FaTrash, FaEdit } from "react-icons/fa"; 
 
 export default function Home() {
   const { authUser } = useAuth();

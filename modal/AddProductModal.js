@@ -5,16 +5,16 @@ import { useProduct } from "../hooks/useProduct";
 export default function AddProductModal({ onClose, fetchProducts }) {
   const { productForm, handleChange, addProduct, message } = useProduct();
 
-  // Sync with product addition and fetch updated products
+  
   useEffect(() => {
     if (message) {
-      fetchProducts(); // Call fetchProducts when message changes (indicating success)
+      fetchProducts(); 
     }
-  }, [message, fetchProducts]); // Depend on message, which indicates the addProduct status
+  }, [message]); 
 
   const handleAddProduct = async (e) => {
     e.preventDefault();
-    await addProduct(); // Call the existing addProduct function
+    await addProduct(); 
   };
 
   return (
@@ -30,9 +30,9 @@ export default function AddProductModal({ onClose, fetchProducts }) {
 
         <h1 className="text-xl sm:text-2xl font-semibold mb-6 text-center">Add a Product</h1>
 
-        {/* Form */}
+
         <form
-          onSubmit={handleAddProduct} // Use the existing addProduct function on submit
+          onSubmit={handleAddProduct} 
           className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
         >
           {[
@@ -67,7 +67,7 @@ export default function AddProductModal({ onClose, fetchProducts }) {
           </button>
         </form>
 
-        {/* Message */}
+
         {message && (
           <p className="text-green-500 mt-4 text-center text-sm sm:text-base">
             {message}
