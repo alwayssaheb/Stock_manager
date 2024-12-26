@@ -66,7 +66,7 @@ export default function Home() {
 
         {/* Current Stock */}
         <div className="container mx-auto bg-white shadow-md rounded-lg overflow-x-auto">
-          <StockTable products={filteredRecords} deleteProduct={deleteProduct} />
+          <StockTable products={filteredRecords} deleteProduct={deleteProduct} fetchProducts={fetchProducts} />
         </div>
       </div>
 

@@ -78,6 +78,14 @@ export async function POST(req) {
     return NextResponse.json({ message: "Data successfully saved to the database!" }, { status: 200 });
   } catch (error) {
     console.error("Error saving to database:", error);
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyValue)[0]; 
+      const value = error.keyValue[field];         
+      return NextResponse.json(
+          { error: `Duplicate key error: ${field} '${value}' already exists.` },
+          { status: 400 }
+      );
+  }
     return NextResponse.json({ error: "An error occurred while saving data." }, { status: 500 });
   }
 }

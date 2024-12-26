@@ -57,11 +57,11 @@ export const useProduct = () => {
         setMessage("Product added successfully!");
         setProductForm({}); 
       } else {
-        setMessage("Failed to add product.");
+        setMessage(data.error || "Failed to add product.");
       }
     } catch (error) {
       console.error("Add product error:", error);
-      setMessage(`Error: ${error.message}`);
+      setMessage(data.error || "Failed to add product.");
     }
   };
 
