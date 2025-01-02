@@ -6,12 +6,13 @@ import { useRouter } from "next/navigation";
 import {jwtDecode} from "jwt-decode";
 
 export default function SignIn() {
-  const { setAuthUser, setIsLoggedIn, setRole } = useAuth(); 
+  const { setAuthUser, setIsLoggedIn, setRole,setusername, username } = useAuth(); 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const router = useRouter();
+
   console.log("AUTH_SECRET in production:", process.env.AUTH_SECRET);
 
   const handleSubmit = async (e) => {
@@ -32,6 +33,10 @@ export default function SignIn() {
       });
 
       const data = await response.json();
+      console.log("(*$!$^!*$&^!$*&!@^$*", data);
+      setusername(data.user.username);
+      console.log(username);
+      
 
       if (response.ok) {
        
@@ -42,8 +47,10 @@ export default function SignIn() {
         
         try {
           const decoded = jwtDecode(data.token);
+          console.log("#@#@#@#@#@#@@#@#@@#", decoded);
           console.log("-------------------------------------------------------------------");
           console.log(decoded);
+         
           setAuthUser(decoded); 
           setRole(decoded.role); 
           setIsLoggedIn(true); 
@@ -56,10 +63,11 @@ export default function SignIn() {
        
         router.push("/");
       } else {
-       
+       console.log("The response in not good, fix it");
         setError(data.error || "Invalid credentials. Please try again.");
       }
     } catch (err) {
+      console.log("THis is the problem");
       console.error("Signin error:", err);
       setError("An error occurred. Please try again.");
     }

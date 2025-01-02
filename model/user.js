@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    branch: {
+        type:String,
+        required:false,
+    },
     forgotPasswordToken: String, 
     forgotPasswordTokenExpiry: Date, 
     VerifyToken: String,

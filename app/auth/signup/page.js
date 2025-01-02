@@ -6,7 +6,8 @@ export default function SignUp() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("User"); 
+  const [role, setRole] = useState("User");
+  const [branch, setBranch] = useState(""); // Added branch state
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -14,7 +15,6 @@ export default function SignUp() {
     e.preventDefault();
 
     try {
-     
       const res = await fetch("/api/register", {
         method: "POST",
         headers: {
@@ -24,22 +24,22 @@ export default function SignUp() {
           name,
           email,
           password,
-          role, 
+          role,
+          branch, // Include branch in the request body
         }),
       });
 
-     
-
       if (res.ok) {
-       
         setError("");
-       
+        setSuccess("User registered successfully!");
         setName("");
         setEmail("");
         setPassword("");
-        setRole("User"); 
+        setRole("User");
+        setBranch(""); // Reset branch state
       } else {
-       
+        const data = await res.json();
+        setError(data.error || "An error occurred. Please try again.");
         setSuccess("");
       }
     } catch (err) {
@@ -55,6 +55,7 @@ export default function SignUp() {
         <h2 className="text-2xl font-bold text-center text-gray-900">
           Create Your Account
         </h2>
+
         {error && (
           <p className="text-red-500 text-center text-sm font-medium">{error}</p>
         )}
@@ -63,6 +64,7 @@ export default function SignUp() {
             {success}
           </p>
         )}
+
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <label
@@ -132,6 +134,23 @@ export default function SignUp() {
               <option value="Admin">Admin</option>
               <option value="User">User</option>
             </select>
+          </div>
+          <div>
+            <label
+              htmlFor="branch"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Branch
+            </label>
+            <input
+              type="text"
+              id="branch"
+              className="w-full px-4 py-2 mt-1 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              placeholder="Your Branch"
+              value={branch}
+              onChange={(e) => setBranch(e.target.value)}
+              required
+            />
           </div>
           <button
             type="submit"

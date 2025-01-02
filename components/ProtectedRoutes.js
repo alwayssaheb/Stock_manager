@@ -1,33 +1,37 @@
-
 "use client";
 
 import { useAuth } from "../context/AuthContext";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation"; // Include path-based routing
 import { useEffect } from "react";
 
 const ProtectedRoute = ({ children }) => {
-  const { isLoggedIn, loading } = useAuth(); 
+  const { isLoggedIn, loading } = useAuth();
   const router = useRouter();
+  const pathname = usePathname(); 
+
+  // Define public routes that don't require authentication
+  const publicRoutes = ["/auth/signup", "/auth/signin"];
 
   useEffect(() => {
-    if (!loading && !isLoggedIn) { 
-      console.log("This is IsLoggedIn: ", isLoggedIn);
+    // Only redirect unauthorized users if they access a protected route
+    if (!loading && !isLoggedIn && !publicRoutes.includes(pathname)) {
+      console.log("This is isLoggedIn: ", isLoggedIn);
       router.push("/auth/signin");
-      console.log("This is protectedRoute");
+      console.log("Redirecting to sign-in page");
     }
-  }, [isLoggedIn, loading, router]);
+  }, [isLoggedIn, loading, pathname, router]);
 
   if (loading) {
-   
-    return <div>Loading...</div>; 
+    return <div>Loading...</div>;
   }
 
- 
-  if (!isLoggedIn) {
-    console.log("this is ProtectedRoute", isLoggedIn); 
+  if (!isLoggedIn && !publicRoutes.includes(pathname)) {
+    console.log("Unauthorized access to a protected route:", pathname);
+    return null; // Prevent rendering protected content during redirect
   }
-  console.log("yes:", isLoggedIn);
-  return children; 
+
+  console.log("Access granted to:", pathname);
+  return children;
 };
 
 export default ProtectedRoute;
