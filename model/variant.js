@@ -14,7 +14,6 @@ const variantSchema = new mongoose.Schema({
   qr_code: {
     type: String,
     required: true,
-    unique: true,
   },
   buy_price: {
     type: Number,

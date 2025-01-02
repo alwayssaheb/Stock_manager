@@ -1,15 +1,15 @@
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { FaTrash, FaEdit } from "react-icons/fa";
-
-import EditModal from '../modal/editModal'; 
+import { useState } from "react";
+import { FaTrash, FaEdit, FaDownload } from "react-icons/fa";
+import EditModal from "../modal/editModal";
+import QRCodeModal from "../modal/qrCodeModal"; // Import QR code modal
 
 const StockTable = ({ products, deleteProduct, fetchProducts }) => {
-  const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [productIdToEdit, setProductIdToEdit] = useState(null);
+  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+  const [productIdToDownload, setProductIdToDownload] = useState(null);
 
   // Calculate paginated data
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -24,33 +24,37 @@ const StockTable = ({ products, deleteProduct, fetchProducts }) => {
     }
   };
 
-  const openModal = (id) => {
+  const openEditModal = (id) => {
     fetchProducts();
     setProductIdToEdit(id);
-    setIsModalOpen(true);
+    setIsEditModalOpen(true);
   };
 
-  const closeModal = () => {
+  const closeEditModal = () => {
     fetchProducts();
-    setIsModalOpen(false);
+    setIsEditModalOpen(false);
     setProductIdToEdit(null);
   };
 
+  const openQrModal = (product) => {
+    setProductIdToDownload(product);
+    setIsQrModalOpen(true);
+  };
+
+  const closeQrModal = () => {
+    setIsQrModalOpen(false);
+    setProductIdToDownload(null);
+  };
+
   const handleDeleteProduct = async (id) => {
-    // Save the current page before deleting
     const previousPage = currentPage;
-
-    // Delete the product
     await deleteProduct(id);
-
-    // Fetch the products after deletion
     await fetchProducts();
 
-   
     if (currentItems.length === 1 && currentPage > 1) {
-      setCurrentPage(previousPage - 1); 
+      setCurrentPage(previousPage - 1);
     } else {
-      setCurrentPage(previousPage); 
+      setCurrentPage(previousPage);
     }
   };
 
@@ -122,20 +126,29 @@ const StockTable = ({ products, deleteProduct, fetchProducts }) => {
                   <td className="px-4 py-2 text-xs sm:text-sm">{profit}</td>
                   <td className="px-4 py-2 text-xs sm:text-sm flex flex-wrap gap-2">
                     <button
-                      onClick={() => openModal(item._id)} // it Open the modal on pen click
+                      onClick={() => openEditModal(item._id)}
                       className="text-blue-500 hover:text-blue-700 text-xs sm:text-sm font-medium transition duration-200"
                       aria-label={`Edit ${item.model_id?.model_name || "item"}`}
                     >
                       <FaEdit className="text-lg" />
                     </button>
                     <button
-                      onClick={() => handleDeleteProduct(item._id)} 
+                      onClick={() => handleDeleteProduct(item._id)}
                       className="text-red-500 hover:text-red-700 text-xs sm:text-sm font-medium transition duration-200"
                       aria-label={`Delete ${
                         item.model_id?.model_name || "item"
                       }`}
                     >
                       <FaTrash className="text-lg" />
+                    </button>
+                    <button
+                      onClick={() => openQrModal(item)} // Pass the full item object
+                      className="text-green-500 hover:text-green-700 text-xs sm:text-sm font-medium transition duration-200"
+                      aria-label={`Download QR code for ${
+                        item.model_id?.model_name || "item"
+                      }`}
+                    >
+                      <FaDownload className="text-lg" />
                     </button>
                   </td>
                 </tr>
@@ -175,7 +188,17 @@ const StockTable = ({ products, deleteProduct, fetchProducts }) => {
       </div>
 
       {/* Edit Product Modal */}
-      {isModalOpen && <EditModal productId={productIdToEdit} closeModal={closeModal} />}
+      {isEditModalOpen && (
+        <EditModal productId={productIdToEdit} closeModal={closeEditModal} />
+      )}
+
+      {/* QR Code Modal */}
+      {isQrModalOpen && (
+        <QRCodeModal
+          productId={productIdToDownload}
+          closeModal={closeQrModal}
+        />
+      )}
     </div>
   );
 };

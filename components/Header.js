@@ -3,19 +3,39 @@
 import { useAuth } from "../context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import ForgetPasswordModal from "../modal/ForgetPasswordModal"; // Import the modal
 
 export default function Header() {
   const { isLoggedIn, logout, authUser } = useAuth();
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
 
   const handleSignOut = () => {
     logout();
     router.push("/auth/signin");
   };
 
+  const handleForgetPassword = () => {
+    setIsModalOpen(true); // Open the modal when "Forget Password" is clicked
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // Close the modal
+  };
+
+  const handleUpdatePassword = (newPassword) => {
+    // Your logic for updating the password goes here
+    console.log("Password updated to:", newPassword);
+  };
+
   const toggleMenu = () => {
     setMenuOpen((prev) => !prev);
+  };
+
+  const toggleDropdown = () => {
+    setDropdownOpen((prev) => !prev);
   };
 
   return (
@@ -62,19 +82,30 @@ export default function Header() {
           <ul className="flex flex-col lg:flex-row lg:space-x-6 lg:items-center">
             {isLoggedIn ? (
               <>
-                {/* Welcome Message */}
-                <li className="px-4 py-2 text-center lg:text-left">
-                  <span className="text-gray-800">
-                    Welcome, {authUser?.email || "User"}!
-                  </span>
-                </li>
-                <li className="px-4 py-2">
-                  <button
-                    onClick={handleSignOut}
-                    className="block w-full px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600 lg:inline lg:w-auto"
+                {/* Welcome Message and Dropdown */}
+                <li className="relative px-4 py-2 text-center lg:text-left">
+                  <span
+                    className="text-gray-800 cursor-pointer"
+                    onClick={toggleDropdown}
                   >
-                    Sign Out
-                  </button>
+                    Welcome, {authUser?.username} ▼
+                  </span>
+                  {dropdownOpen && (
+                    <div className="absolute mt-2 w-48 bg-white border border-gray-200 rounded shadow-md">
+                      <button
+                        onClick={handleSignOut}
+                        className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+                      >
+                        Sign Out
+                      </button>
+                      <button
+                        onClick={handleForgetPassword} // Open modal on click
+                        className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+                      >
+                        Forget Password
+                      </button>
+                    </div>
+                  )}
                 </li>
               </>
             ) : (
@@ -91,20 +122,12 @@ export default function Header() {
         </nav>
       </div>
 
-      {/* Mobile Menu: Ensure Welcome Message and Menu Dropdown don't overlap */}
-      {menuOpen && isLoggedIn && (
-        <div className="lg:hidden p-4 bg-gray-100 z-40 shadow-lg">
-          <span className="text-gray-800 text-center block mb-2">
-            Welcome, {authUser?.email || "User"}!
-          </span>
-          <button
-            onClick={handleSignOut}
-            className="w-full px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600"
-          >
-            Sign Out
-          </button>
-        </div>
-      )}
+      {/* Password Reset Modal */}
+      <ForgetPasswordModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleUpdatePassword}
+      />
     </header>
   );
 }

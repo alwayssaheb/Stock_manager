@@ -3,7 +3,6 @@ import User from "../../../model/user";
 import { NextRequest, NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
 
-
 connectDB();
 
 export async function POST(request) {
@@ -11,11 +10,10 @@ export async function POST(request) {
 
         const reqBody = await request.json();
         console.log(reqBody);
-        const { name, email, password, role } = reqBody;
-        console.log("This is username: "+  name);
+        const { name, email, password, role, branch } = reqBody; // Include branch here
+        console.log("This is username: " + name);
 
-
-        if (!name || !email || !password || !role) {
+        if (!name || !email || !password || !role || !branch) { // Validate branch field
             return NextResponse.json(
                 { error: "All fields are required" },
                 { status: 400 }
@@ -30,18 +28,16 @@ export async function POST(request) {
             );
         }
 
-
         const salt = await bcryptjs.genSalt(10);
         const hashedPassword = await bcryptjs.hash(password, salt);
-
 
         const newUser = new User({
             username: name,
             email,
             password: hashedPassword,
             role,
+            branch, // Add branch to the newUser object
         });
-
 
         const savedUser = await newUser.save();
         console.log(savedUser);

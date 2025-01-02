@@ -6,7 +6,7 @@ import StockTable from "../component/StockTable";
 import { useProduct } from "../hooks/useProduct";
 import AddProductModal from "../modal/AddProductModal";
 import UploadExcelModal from "../modal/UploadExcelModal";
-import { FaTrash, FaEdit } from "react-icons/fa"; 
+import { FaTrash, FaEdit } from "react-icons/fa";
 
 export default function Home() {
   const { authUser } = useAuth();
@@ -33,21 +33,21 @@ export default function Home() {
     <>
       <div className="container mx-auto p-4 sm:p-6 lg:p-8 bg-gray-50 overflow-x-auto">
         {/* Buttons */}
-        <div className="flex flex-wrap gap-4 mb-6 justify-center md:justify-start">
+        <div className="flex flex-wrap gap-4 mb-6 justify-end md:justify-end">
           <button
             onClick={() => setIsAddProductModalOpen(true)}
-            className="bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600 text-xs sm:text-sm md:text-base"
+            className="bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600 text-xs sm:text-sm md:text-base transition-transform duration-300 hover:scale-105"
           >
             Add a Product
           </button>
           <button
             onClick={() => setIsUploadExcelModalOpen(true)}
-            className="bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600 text-xs sm:text-sm md:text-base"
+            className="bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600 text-xs sm:text-sm md:text-base transition-transform duration-300 hover:scale-105"
           >
             Upload an Excel File
           </button>
           <Link href="/scan">
-            <button className="bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600 text-xs sm:text-sm md:text-base">
+            <button className="bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600 text-xs sm:text-sm md:text-base transition-transform duration-300 hover:scale-105">
               Scan QR Code
             </button>
           </Link>
@@ -66,16 +66,26 @@ export default function Home() {
 
         {/* Current Stock */}
         <div className="container mx-auto bg-white shadow-md rounded-lg overflow-x-auto">
-          <StockTable products={filteredRecords} deleteProduct={deleteProduct} fetchProducts={fetchProducts} />
+          <StockTable
+            products={filteredRecords}
+            deleteProduct={deleteProduct}
+            fetchProducts={fetchProducts}
+          />
         </div>
       </div>
 
       {/* Modals */}
       {isAddProductModalOpen && (
-        <AddProductModal onClose={() => setIsAddProductModalOpen(false)} fetchProducts={fetchProducts} />
+        <AddProductModal
+          onClose={() => setIsAddProductModalOpen(false)}
+          fetchProducts={fetchProducts}
+        />
       )}
       {isUploadExcelModalOpen && (
-        <UploadExcelModal onClose={() => setIsUploadExcelModalOpen(false)} fetchProducts={fetchProducts} />
+        <UploadExcelModal
+          onClose={() => setIsUploadExcelModalOpen(false)}
+          fetchProducts={fetchProducts}
+        />
       )}
     </>
   );

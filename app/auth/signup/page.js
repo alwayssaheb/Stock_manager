@@ -7,8 +7,9 @@ export default function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("User");
+  const [branch, setBranch] = useState(""); // Added branch state
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(""); // Added success state
+  const [success, setSuccess] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,25 +25,27 @@ export default function SignUp() {
           email,
           password,
           role,
+          branch, // Include branch in the request body
         }),
       });
 
       if (res.ok) {
         setError("");
-        setSuccess("User registered successfully!"); // Display success message
+        setSuccess("User registered successfully!");
         setName("");
         setEmail("");
         setPassword("");
         setRole("User");
+        setBranch(""); // Reset branch state
       } else {
         const data = await res.json();
         setError(data.error || "An error occurred. Please try again.");
-        setSuccess(""); // Clear success message if error occurs
+        setSuccess("");
       }
     } catch (err) {
       console.error("Error during registration:", err);
       setError("An unexpected error occurred. Please try again.");
-      setSuccess(""); // Clear success message if error occurs
+      setSuccess("");
     }
   };
 
@@ -131,6 +134,23 @@ export default function SignUp() {
               <option value="Admin">Admin</option>
               <option value="User">User</option>
             </select>
+          </div>
+          <div>
+            <label
+              htmlFor="branch"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Branch
+            </label>
+            <input
+              type="text"
+              id="branch"
+              className="w-full px-4 py-2 mt-1 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              placeholder="Your Branch"
+              value={branch}
+              onChange={(e) => setBranch(e.target.value)}
+              required
+            />
           </div>
           <button
             type="submit"

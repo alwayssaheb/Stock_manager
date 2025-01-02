@@ -14,9 +14,11 @@ export function AuthProvider({ children }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true); 
+  const [username , setusername] = useState("unknow user");
 
   useEffect(() => {
     console.log("I ran first");
+    console.log(")))))))))))))))&&&&&&&&&&&&",username);
     const token = localStorage.getItem("token");
     console.log(token);
     if (token) {
@@ -24,6 +26,7 @@ export function AuthProvider({ children }) {
         console.log("im in");
         const decoded = jwtDecode(token);
         setAuthUser(decoded);
+        console.log("&&&&&&&&&&&&&&&&&&",decoded);
         setRole(decoded.role);
         setIsLoggedIn(true);
       } catch (error) {
@@ -49,6 +52,8 @@ export function AuthProvider({ children }) {
     setRole,
     logout,
     loading, 
+    username,
+    setusername,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

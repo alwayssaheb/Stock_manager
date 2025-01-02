@@ -16,7 +16,6 @@ export async function POST(req) {
     for (const entry of data) {
       const {
         model_name,
-        category,
         variant_type,
         qr_code,
         buy_price,
@@ -29,10 +28,9 @@ export async function POST(req) {
       } = entry;
 
       // Validate required fields
-      if (!model_name || !category || !variant_type || !qr_code || !buy_price || !sell_price || !wholesale_price || !quantity || !hardware_category || !shop_name) {
+      if (!model_name || !variant_type || !qr_code || !buy_price || !sell_price || !wholesale_price || !quantity || !hardware_category || !shop_name) {
         const missingFields = [];
         if (!model_name) missingFields.push('model_name');
-        if (!category) missingFields.push('category');
         if (!variant_type) missingFields.push('variant_type');
         if (!qr_code) missingFields.push('qr_code');
         if (!buy_price) missingFields.push('buy_price');
@@ -46,11 +44,11 @@ export async function POST(req) {
      
 
       // Look for an existing model with the same model_name and category
-      let model = await Model.findOne({ model_name, category });
+      let model = await Model.findOne({ model_name });
 
       // Create the model if it doesn't exist
       if (!model) {
-        model = await Model.create({ model_name, category });
+        model = await Model.create({ model_name });
       }
 
       // Look for an existing shop with the same shop_name and address (if provided)

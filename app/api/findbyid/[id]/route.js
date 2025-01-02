@@ -2,7 +2,8 @@ import { connectDB } from "../../../../dbConfig/dbConfig";
 import Variant from "../../../../model/variant";
 
 export async function GET(req, { params }) {
-  const { id } = params; // Get product ID from params
+  const { id } = await params; // Get product ID from params
+  
   await connectDB();
   try {
     const product = await Variant.findById(id)

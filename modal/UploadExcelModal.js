@@ -16,6 +16,10 @@ export default function UploadExcelModal({ onClose, fetchProducts }) {
     }
   };
 
+  const generateRandomQRCode = () => {
+    return Math.floor(1000 + Math.random() * 9000); // Generate a random 4-digit number
+  };
+
   const previewData = () => {
     if (file) {
       const reader = new FileReader();
@@ -26,7 +30,16 @@ export default function UploadExcelModal({ onClose, fetchProducts }) {
           const sheetName = workbook.SheetNames[0];
           const workSheet = workbook.Sheets[sheetName];
           const json = XLSX.utils.sheet_to_json(workSheet);
-          setJsonData(JSON.stringify(json, null, 2));
+
+          // Add QR code for each row
+          const updatedData = json.map((item) => {
+            return {
+              ...item,
+              qr_code: generateRandomQRCode(), // Add qr_code field
+            };
+          });
+
+          setJsonData(JSON.stringify(updatedData, null, 2));
         }
       };
       reader.readAsBinaryString(file);

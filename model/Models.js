@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 const modelSchema = new mongoose.Schema(
   {
     model_name: { type: String, required: true },  // Required field for model name
-    category: { type: String, required: true },    // Required field for category
+   // Required field for category
   },
   { timestamps: true }  // Automatically add createdAt and updatedAt fields
 );
