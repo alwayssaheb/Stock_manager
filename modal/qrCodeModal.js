@@ -7,7 +7,7 @@ export default function QRCodeModal({ productId, closeModal }) {
 
   useEffect(() => {
     if (productId?.qr_code) {
-      // Generate QR code from the 4-digit number (qr_code from productId)
+     
       QRCode.toDataURL(productId.qr_code) // Generate QR code for the 4-digit number
         .then((url) => setQrCodeImage(url)) // Set the base64 string in the state
         .catch((error) => console.error("Error generating QR code", error));
